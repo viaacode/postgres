@@ -33,7 +33,8 @@ RUN set -eux; \
 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
 	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	echo 'honor-http-proxy' >$GNUPGHOME/dirmngr.conf; \
+	gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
 	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
@@ -76,6 +77,7 @@ RUN set -ex; \
 # uid                  PostgreSQL Debian Repository
 	key='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8'; \
 	export GNUPGHOME="$(mktemp -d)"; \
+	echo 'honor-http-proxy' >$GNUPGHOME/dirmngr.conf; \
 	gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 	gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
 	command -v gpgconf > /dev/null && gpgconf --kill all; \
